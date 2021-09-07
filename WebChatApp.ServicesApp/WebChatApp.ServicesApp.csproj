@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WebChatApp.Data\WebChatApp.Data.csproj" />
+    <ProjectReference Include="..\WebChatApp.Models\WebChatApp.Models.csproj" />
+  </ItemGroup>
+
+</Project>

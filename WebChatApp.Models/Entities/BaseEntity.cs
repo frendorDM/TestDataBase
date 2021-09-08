@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace WebChatApp.Models.Entities
+﻿namespace WebChatApp.Models.Entities
 {
-    public class BaseEntity
+    public class BaseEntity : IBaseEntity
     {
         public int Id { get; set; }
 

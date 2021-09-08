@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac" Version="6.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\WebChatApp.Data\WebChatApp.Data.csproj" />
     <ProjectReference Include="..\WebChatApp.Models\WebChatApp.Models.csproj" />
   </ItemGroup>

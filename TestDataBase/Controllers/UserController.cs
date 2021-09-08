@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebChatApp.Core;
 using WebChatApp.Models.Entities;
 using WebChatApp.Models.Models.InputModels;
 using WebChatApp.Models.Models.OutputModels;
@@ -33,18 +34,16 @@ namespace TestDataBase.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [HttpGet("{userId}")]
         //[Authorize]
-        public ActionResult<UserOutputDto> GetUser(int userId)
+        public async Task<IActionResult> GetUser(int userId)
         {
-            var user = _service.GetUserById(userId);
+            var user = await _service.GetUserById(userId);
+
             if (user == null)
             {
                 return NotFound($"User with id {userId} is not found");
             }
 
-            //var outputModel = _mapper.Map<UserOutputModel>(user);
-            //
-            //return Ok(outputModel);
-            return Ok();
+            return Ok(user);
         }
         [HttpGet("current")]
         //[Authorize]

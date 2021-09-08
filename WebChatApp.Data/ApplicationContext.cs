@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using WebChatApp.Core.Session;
 using WebChatApp.Models.Entities;
 using WebChatApp.Models.RelationShip;
 
@@ -10,7 +11,10 @@ namespace WebChatApp.Data
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
         }
+        public ApplicationContext()
+        {
 
+        }
         public DbSet<UserEntity> Users { get; set; }
         public DbSet<RoleEntity> Roles { get; set; }
         public DbSet<AccessRuleEntity> AccessRules { get; set; }

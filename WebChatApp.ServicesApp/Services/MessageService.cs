@@ -1,5 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebChatApp.Core;
+using WebChatApp.Core.Session;
+using WebChatApp.Models.Entities;
 using WebChatApp.Models.Models.InputModels;
 using WebChatApp.Models.Models.OutputModels;
 
@@ -7,16 +12,32 @@ namespace WebChatApp.ServicesApp
 {
     public class MessageService : IMessageService
     {
-        public int AddMessage(MessageInputDto messageDto)
+        private IMapper _mapper;
+        private ISession _session;
+        public MessageService(ISession session, IMapper mapper)
         {
-            throw new System.NotImplementedException();
+            _session = session;
+            _mapper = mapper;
+        }
+        public Task AddMessage(MessageInputDto messageDto)
+        {
+            var messageModel = _mapper.Map<MessageEntity>(messageDto);
+            var messageId = _session.AddEntityAsync(messageModel);
+            return messageId;
         }
 
-        public int DeleteMessage(int id)
+        public async Task DeleteMessage(MessageOutputDto message)
         {
-            throw new System.NotImplementedException();
+            var messageEntity = _mapper.Map<MessageEntity>(message);
+            await _session.RemoveEntityPhysical(messageEntity);
         }
 
+        public async Task<MessageOutputDto> GetMessageById(int id) 
+        {
+            var messageEntity = await _session.Query<MessageEntity>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            var result = _mapper.Map<MessageOutputDto>(messageEntity);
+            return result;
+        }
         public List<MessageOutputDto> GetMaterialsByGroupId(int id)
         {
             throw new System.NotImplementedException();

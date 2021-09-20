@@ -36,12 +36,12 @@ namespace TestDataBase.Controllers
         [ProducesResponseType(typeof(MessageOutputDto), StatusCodes.Status200OK)]
         [HttpPost]
         //[Authorize]
-        public ActionResult<int> AddMessage([FromBody] MessageInputDto messageInputDto)
+        public async Task<IActionResult>AddMessage([FromBody] MessageInputDto messageInputDto)
         {
-            var newEntityId = _service.AddMessage(messageInputDto);
+            await _service.AddMessage(messageInputDto);
             //var newMessageDto = _service.GetMessageById(newEntityId);
             //var result = _mapper.Map<MessageOutputDto>(newMessageDto);
-            return Ok(newEntityId);
+            return Ok();
         }
 
         /// <summary>
@@ -54,12 +54,35 @@ namespace TestDataBase.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [HttpDelete("{id}")]
         //[Authorize(Roles = "Администратор, Модератор")]
-        public ActionResult DeleteMessage(int id)
+        public async Task<ActionResult> DeleteMessage(int id)
         {
-            //if (_service.GetMessageById(id) is null)
-            //    return NotFound($"Message {id} not found");
-            //_service.DeleteMessageById(id);
+            var message = await _service.GetMessageById(id);
+            if (message is null)
+                return NotFound($"Message {id} not found");
+            await _service.DeleteMessage(message);
+
             return NoContent();
+        }
+
+        // https://localhost:44365/api/message/1
+        /// <summary>Get info of message</summary>
+        /// <param name="messageId">Id of message</param>
+        /// <returns>Info of message</returns>
+        [ProducesResponseType(typeof(ChatOutputDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [HttpGet("{messageId}")]
+        //[Authorize]
+        public async Task<IActionResult> GetMessage(int messageId)
+        {
+            var message = await _service.GetMessageById(messageId);
+
+            if (message == null)
+            {
+                return NotFound($"Message with id {messageId} is not found");
+            }
+
+            return Ok(message);
         }
 
         // https://localhost:/api/message/by-chat/2

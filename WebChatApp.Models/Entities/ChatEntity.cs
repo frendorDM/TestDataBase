@@ -7,6 +7,7 @@ namespace WebChatApp.Models.Entities
 {
     public class ChatEntity : BaseEntity
     {
+        public string ChatName { get; set; }
         public int? UserCreatorId { get; set; }
         public int Type { get; set; }
 

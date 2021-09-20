@@ -19,6 +19,7 @@ namespace TestDataBase
             CreateMap<UserInputDto, UserEntity>();
             CreateMap<ChatInputDto, ChatEntity>();
             CreateMap<MessageInputDto, MessageEntity>();
+            CreateMap<MessageOutputDto,MessageEntity>();
         }
 
     }

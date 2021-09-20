@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -20,12 +21,13 @@ namespace TestDataBase.Controllers
     {
         private IUserService _service;
 
+
         public UserController(IUserService userService)
         {
             _service = userService;
         }
 
-        // https://localhost:44365/api/user/42
+        // https://localhost:44333/api/user/42
         /// <summary>Get info of user</summary>
         /// <param name="userId">Id of user</param>
         /// <returns>Info of user</returns>
@@ -45,6 +47,24 @@ namespace TestDataBase.Controllers
 
             return Ok(user);
         }
+        // https://localhost:/api/user/register 
+        /// <summary>user registration</summary> 
+        /// <param name="inputModel">information about registered user</param> 
+        /// <returns>rReturn information about added user</returns> 
+        [ProducesResponseType(typeof(UserOutputDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [HttpPost("addUser")]
+        //[Authorize(Roles = "Администратор, Менеджер")] 
+        public async Task<ActionResult> AddUser([FromBody] UserInputDto inputModel)
+        {
+            //var id = _service.AddUser(inputModel); 
+            //var user = _service.GetUserById(id); 
+            //var outputModel = _mapper.Map<UserOutputDto>(user); 
+            await _service.AddUser(inputModel);
+            return Ok();
+
+        }
+
         [HttpGet("current")]
         //[Authorize]
         public ActionResult<UserOutputDto> GetCurrentUser()
@@ -53,24 +73,24 @@ namespace TestDataBase.Controllers
             //var user = _service.GetUserById(userId);
             return Ok();
         }
-        // https://localhost:/api/user/register
-        /// <summary>user registration</summary>
-        /// <param name="inputModel">information about registered user</param>
-        /// <returns>rReturn information about added user</returns>
-        [ProducesResponseType(typeof(UserOutputDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
-        [HttpPost("register")]
-        //[Authorize(Roles = "Администратор, Менеджер")]
-        public ActionResult<UserOutputDto> Register([FromBody] UserEntity inputModel)
-        {
-
-            //var userDto = _mapper.Map<User>(inputModel);
-            var id = _service.AddUser(inputModel);
-            // var user = _service.GetUserById(id);
-            //var outputModel = _mapper.Map<UserOutputDto>();
-            return Ok();
-
-        }
+        //// https://localhost:/api/user/register
+        ///// <summary>user registration</summary>
+        ///// <param name="inputModel">information about registered user</param>
+        ///// <returns>rReturn information about added user</returns>
+        //[ProducesResponseType(typeof(UserOutputDto), StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status409Conflict)]
+        //[HttpPost("register")]
+        ////[Authorize(Roles = "Администратор, Менеджер")]
+        //public ActionResult<UserOutputDto> Register([FromBody] UserEntity inputModel)
+        //{
+        //
+        //    //var userDto = _mapper.Map<User>(inputModel);
+        //    var id = _service.AddUser(inputModel);
+        //    // var user = _service.GetUserById(id);
+        //    //var outputModel = _mapper.Map<UserOutputDto>();
+        //    return Ok();
+        //
+        //}
 
         // [HttpPost("login")]
         // public ActionResult Login([FromBody] UserInputDto inputModel) 
@@ -95,25 +115,19 @@ namespace TestDataBase.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [HttpPut("{userId}")]
         //[Authorize(Roles = "Администратор, Пользователь")]
-        public ActionResult<UserOutputDto> UpdateUserInfo(int userId, [FromBody] UpdateUserInputDto inputModel)
+        public async Task<IActionResult> UpdateUserLogin(int userId, [FromBody] UpdateUserInputDto inputModel)
         {
 
-            // var user = _service.GetUserById(userId);
-            // if (user == null)
-            // {
-            //     return NotFound($"User with id {userId} is not found");
-            // }
-            // if (User.IsInRole("Администратор")
-            //     || (User.IsInRole("Пользователь") && user.Roles.Contains(Core.Enums.Role.User)))
-            // {
-            //     var userDto = _mapper.Map<User>(inputModel);
-            //     _service.UpdateUser(userId, userDto);
-            //     var outputModel = _mapper.Map<UserOutputDto>(_service.GetUserById(userId));
-            //     return Ok(outputModel);
-            // }
-            ///
-            return Forbid("Updated user is not ChatUser");
-            //
+            var user = await _service.GetUserById(userId);
+            if (user == null)
+            {
+                return NotFound($"User with id {userId} is not found");
+            }
+
+            await _service.UpdateUserLogin(user, inputModel.Login);
+            return Ok();
+            
+            //return Forbid("Updated user is not ChatUser");
         }
     }
 }

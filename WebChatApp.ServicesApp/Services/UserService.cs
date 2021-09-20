@@ -1,23 +1,30 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using WebChatApp.Core;
 using WebChatApp.Core.Session;
 using WebChatApp.Models.Entities;
+using WebChatApp.Models.Models.InputModels;
+using WebChatApp.Models.Models.OutputModels;
 
 namespace WebChatApp.ServicesApp
 {
     public class UserService : IUserService
     {
         private readonly ISession _session;
-        public UserService(ISession session)
+        private IMapper _mapper;
+        public UserService(ISession session, IMapper mapper)
         {
             _session = session;
+            _mapper = mapper;
         }
 
-        public int AddUser(UserEntity userDto)
+        public async Task AddUser(UserInputDto inputModel)
         {
-            throw new NotImplementedException();
+            var userEntity = _mapper.Map<UserEntity>(inputModel);
+            await _session.AddEntityAsync(userEntity);
         }
 
         public int DeleteUser(int id)
@@ -32,14 +39,17 @@ namespace WebChatApp.ServicesApp
             return user;
         }
 
-        public int UpdateUser(int id, UserEntity userDto)
+        public async Task UpdateUserLogin( UserEntity inputModel, string newLogin)
         {
-            throw new NotImplementedException();
+            //var userEntity = _mapper.Map<UserEntity>(inputModel);
+            inputModel.Login = newLogin;
+            await _session.UpdateEntity(inputModel);
+
         }
 
-        public UserEntity UpdateUserLogin(string login, int userId)
-        {
-            throw new NotImplementedException();
-        }
+        //public UserEntity UpdateUserLogin(string login, int userId)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

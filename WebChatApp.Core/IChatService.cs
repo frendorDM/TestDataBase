@@ -1,17 +1,20 @@
-﻿using WebChatApp.Models.Entities;
+﻿using System.Threading.Tasks;
+using WebChatApp.Models.Entities;
 using WebChatApp.Models.Models.InputModels;
 
 namespace WebChatApp.Core
 {
     public interface IChatService
     {
-        public ChatEntity GetChatById(int id);
+        public Task<ChatEntity> GetChatById(int id);
 
-        public int AddChat(ChatInputDto chatDto);
+        public Task AddChat(ChatInputDto chatInputDto);
 
-        public int UpdateChat(ChatEntity chatDto);
+        public Task UpdateChatName(ChatEntity chatDto, string chatName);
 
         public int DeleteChat(int id);
+
+        public Task AddUserToChat(int chatId, int userId);
 
     }
 }

@@ -21,10 +21,13 @@ namespace WebChatApp.ServicesApp
             _session = session;
         }
 
-        public async Task AddChat(ChatInputDto inputModel)
+        public async Task<int> AddChat(ChatInputDto inputModel,int chatType)
         {
             var chatEntity = _mapper.Map<ChatEntity>(inputModel);
+            chatEntity.Type = chatType;
+
             await _session.AddEntityAsync(chatEntity);
+            return chatEntity.Id;
         }
 
         public int DeleteChat(int id)
@@ -36,6 +39,7 @@ namespace WebChatApp.ServicesApp
         {
             var chatEntity = await _session.Query<ChatEntity>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
             return chatEntity;
+
         }
 
         public async Task UpdateChatName(ChatEntity chatDto, string chatName)

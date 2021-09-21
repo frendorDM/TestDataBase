@@ -6,8 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebChatApp.Core;
+using WebChatApp.Core.Enum;
+using WebChatApp.Models.Entities;
 using WebChatApp.Models.Models.InputModels;
 using WebChatApp.Models.Models.OutputModels;
+using WebChatApp.Models.RelationShip;
 using WebChatApp.ServicesApp;
 
 namespace TestDataBase.Controllers
@@ -38,13 +41,65 @@ namespace TestDataBase.Controllers
         [ProducesResponseType(typeof(ChatOutputDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [HttpPost]
-        //[Authorize]
-        public async Task<ActionResult> AddNewChat([FromBody] ChatInputDto chat)
+        [HttpPost("public")]
+        //[Authorize] 
+        public async Task<ActionResult> AddNewPublicChat([FromBody] ChatInputDto chat)
         {
-            await _service.AddChat(chat);
-            //var result = _mapper.Map<ChatOutputDto>(_service.GetChatById(addedChatId)); //в сервисы убрать 
-            //return Ok(result);
+            int chatType = (int)ChatType.Public;
+            await _service.AddChat(chat, chatType);
+            //var result = _mapper.Map<ChatOutputDto>(_service.GetChatById(addedChatId)); //в сервисы убрать  
+            //return Ok(result); 
+            return Ok();
+        }
+        // можно сделать 3 контроллера на создание комнат. 3 вида комнат, актоматически заполнять поле Тип Чата. 
+        // убрать id из ассациативнаых таблиц. Добавить таблицу блок позователей. С датой начала блока и временем блока. Chek is bloked user 
+        // можно выгнать пользователя по DateTime(MAX) 
+        /// <summary> 
+        /// Creates Chat 
+        /// </summary> 
+        /// <param name="chat"> is used to get all the information about new chat that is necessary to create it</param> 
+        /// <returns>Returns the ChatOutputModel</returns> 
+        // https://localhost:/api/chat/ 
+        [ProducesResponseType(typeof(ChatOutputDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [HttpPost("privet/{userChatId}")]
+        //[Authorize] 
+        public async Task<ActionResult> AddNewPrivateChat([FromBody] ChatInputDto chat, int userChatId)
+        {
+            var user = await _userService.GetUserById(chat.UserCreatorId);
+            if (user is null)
+                return NotFound($"User with id{chat.UserCreatorId} not found");
+
+            var userChat = await _userService.GetUserById(userChatId);
+            if (user is null)
+                return NotFound($"User with id{chat.UserCreatorId} not found");
+
+            int chatType = (int)ChatType.Private;
+            var chatId = await _service.AddChat(chat, chatType);
+            //var result = _mapper.Map<ChatOutputDto>(_service.GetChatById(addedChatId)); //в сервисы убрать  
+            //return Ok(result); 
+            await _service.AddUserToChat(chatId, userChatId);
+            return Ok();
+        }
+
+        /// <summary> 
+        /// Creates Chat 
+        /// </summary> 
+        /// <param name="chat"> is used to get all the information about new chat that is necessary to create it</param> 
+        /// <returns>Returns the ChatOutputModel</returns> 
+        // https://localhost:/api/chat/ 
+        [ProducesResponseType(typeof(ChatOutputDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [HttpPost("bot")]
+        //[Authorize] 
+        public async Task<ActionResult> AddNewChatBot([FromBody] ChatInputDto chat)
+        {
+            int chatType = (int)ChatType.Bot;
+            await _service.AddChat(chat, chatType);
+            //var result = _mapper.Map<ChatOutputDto>(_service.GetChatById(addedChatId)); //в сервисы убрать  
+            //return Ok(result); 
             return Ok();
         }
         // можно сделать 3 контроллера на создание комнат. 3 вида комнат, актоматически заполнять поле Тип Чата.
@@ -111,9 +166,24 @@ namespace TestDataBase.Controllers
             if (chat is null)
                 return NotFound($"Chat with id{chatId} not found");
 
-            var user = _userService.GetUserById(userId);
+            var user = await _userService.GetUserById(userId);
             if (user is null)
-                return NotFound($"Пользователь c id {userId} не найден");
+                return NotFound($"User with id{userId} not found");
+
+            if (chat.Type != ((int)ChatType.Public))
+                return BadRequest($"This chat with id {chatId} cannot accept few user");
+
+            if (chat.UserCreatorId == userId)
+                return BadRequest($"This chat with id {chatId} cannot accept few user");
+
+            foreach (var userChat in chat.Users)
+            {
+                if (userChat.UserId == userId)
+                {
+                    return BadRequest($"This chat with id {chatId} cannot accept few user");
+                }
+            }
+
 
             await _service.AddUserToChat(chatId, userId);
             return Ok();

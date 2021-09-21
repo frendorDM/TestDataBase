@@ -8,8 +8,9 @@ namespace WebChatApp.Core
     {
         public Task<ChatEntity> GetChatById(int id);
 
-        public Task AddChat(ChatInputDto chatInputDto);
+        public Task<int> AddChat(ChatInputDto chatInputDto, int chatType); 
 
+        //public Task<int> AddPrivateChat(ChatInputDto chatInputDto, int chatType);
         public Task UpdateChatName(ChatEntity chatDto, string chatName);
 
         public int DeleteChat(int id);

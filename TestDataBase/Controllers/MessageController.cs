@@ -85,22 +85,25 @@ namespace TestDataBase.Controllers
             return Ok(message);
         }
 
-        // https://localhost:/api/message/by-chat/2
-        /// <summary>Get all message related to chat</summary>
-        /// <param name="id">Id of chat, which chat is needed</param>
-        /// <returns>List of message to chat</returns>
-        [ProducesResponseType(typeof(List<MessageOutputDto>), StatusCodes.Status200OK)]
+        // https://localhost:44365/api/message/1
+        /// <summary>Get info of message</summary>
+        /// <param name="messageId">Id of message</param>
+        /// <returns>Info of message</returns>
+        [ProducesResponseType(typeof(ChatOutputDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [HttpGet("by-chat/{id}")]
+        [HttpGet("by-chat/{chatId}")]
         //[Authorize]
-        public ActionResult<List<MessageOutputDto>> GetMessagesByChatId(int id)
+        public async Task<IActionResult> GetAllMessageByChatId(int chatId)
         {
-            //if (_serviceGroup.GetChatById(id) is null)
-            //    return NotFound($"Chat {id} not found");
-            var listMessage = _service.GetMaterialsByGroupId(id);
-            return Ok(listMessage);
+            var chat = await _service.GetAllMessageByChatId(chatId);
 
+            if (chat == null)
+            {
+                return NotFound($"Message with id {chatId} is not found");
+            }
+
+            return Ok(chat);
         }
     }
 }

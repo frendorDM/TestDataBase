@@ -37,9 +37,8 @@ namespace WebChatApp.ServicesApp
 
         public async Task<ChatEntity> GetChatById(int id)
         {
-            var chatEntity = await _session.Query<ChatEntity>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            var chatEntity = await _session.Query<ChatEntity>().AsNoTracking().Include(x=> x.Users).FirstOrDefaultAsync(x => x.Id == id);
             return chatEntity;
-
         }
 
         public async Task UpdateChatName(ChatEntity chatDto, string chatName)

@@ -12,8 +12,7 @@ namespace WebChatApp.Core
 
         public Task DeleteMessage(MessageOutputDto message);
         public Task<MessageOutputDto> GetMessageById(int id);
-
-        public List<MessageOutputDto> GetMaterialsByGroupId(int id);
+        public Task<List<MessageOutputDto>> GetAllMessageByChatId(int chatid);
 
     }
 }

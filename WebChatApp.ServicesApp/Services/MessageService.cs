@@ -38,9 +38,16 @@ namespace WebChatApp.ServicesApp
             var result = _mapper.Map<MessageOutputDto>(messageEntity);
             return result;
         }
-        public List<MessageOutputDto> GetMaterialsByGroupId(int id)
+        public async Task<List<MessageOutputDto>> GetAllMessageByChatId(int chatid)
         {
-            throw new System.NotImplementedException();
+            var messageEntities = await _session.Query<ChatEntity>().AsNoTracking().Include(x => x.Messages).FirstOrDefaultAsync(x => x.Id == chatid);
+            List<MessageOutputDto> messageOutput = new List<MessageOutputDto>();
+            foreach (var message in messageEntities.Messages) 
+            {
+                var messageOutputDto = _mapper.Map<MessageOutputDto>(message);
+                messageOutput.Add(messageOutputDto);
+            }
+            return messageOutput;
         }
     }
 }

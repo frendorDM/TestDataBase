@@ -54,6 +54,7 @@ namespace TestDataBase.Controllers
         // можно сделать 3 контроллера на создание комнат. 3 вида комнат, актоматически заполнять поле Тип Чата. 
         // убрать id из ассациативнаых таблиц. Добавить таблицу блок позователей. С датой начала блока и временем блока. Chek is bloked user 
         // можно выгнать пользователя по DateTime(MAX) 
+
         /// <summary> 
         /// Creates Chat 
         /// </summary> 
@@ -63,7 +64,7 @@ namespace TestDataBase.Controllers
         [ProducesResponseType(typeof(ChatOutputDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
-        [HttpPost("privet/{userChatId}")]
+        [HttpPost("private/{userChatId}")]
         //[Authorize] 
         public async Task<ActionResult> AddNewPrivateChat([FromBody] ChatInputDto chat, int userChatId)
         {
@@ -77,8 +78,7 @@ namespace TestDataBase.Controllers
 
             int chatType = (int)ChatType.Private;
             var chatId = await _service.AddChat(chat, chatType);
-            //var result = _mapper.Map<ChatOutputDto>(_service.GetChatById(addedChatId)); //в сервисы убрать  
-            //return Ok(result); 
+
             await _service.AddUserToChat(chatId, userChatId);
             return Ok();
         }
@@ -98,8 +98,7 @@ namespace TestDataBase.Controllers
         {
             int chatType = (int)ChatType.Bot;
             await _service.AddChat(chat, chatType);
-            //var result = _mapper.Map<ChatOutputDto>(_service.GetChatById(addedChatId)); //в сервисы убрать  
-            //return Ok(result); 
+
             return Ok();
         }
         // можно сделать 3 контроллера на создание комнат. 3 вида комнат, актоматически заполнять поле Тип Чата.
@@ -180,10 +179,9 @@ namespace TestDataBase.Controllers
             {
                 if (userChat.UserId == userId)
                 {
-                    return BadRequest($"This chat with id {chatId} cannot accept few user");
+                    return BadRequest($"There is already a user with id{userId} in this chat with id{chatId}");
                 }
             }
-
 
             await _service.AddUserToChat(chatId, userId);
             return Ok();

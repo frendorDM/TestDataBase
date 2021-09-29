@@ -11,13 +11,8 @@ namespace WebChatApp.Models.Models.InputModels
         [StringLength(50)]
         public string ChatName { get; set; }
         [Required]
-        [Range(1, int.MaxValue)]
         public int UserCreatorId { get; set; }
-        //[Required]
-        //[Range(1, 3)]
-        //public int Type { get; set; }
 
         public List<int> Users { get; set; }
-        public List<MessageInputDto> Messages { get; set; }
     }
 }

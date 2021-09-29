@@ -46,10 +46,5 @@ namespace WebChatApp.ServicesApp
             await _session.UpdateEntity(inputModel);
 
         }
-
-        //public UserEntity UpdateUserLogin(string login, int userId)
-        //{
-        //    throw new NotImplementedException();
-        //}
     }
 }

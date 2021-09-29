@@ -71,7 +71,7 @@ namespace TestDataBase.Controllers
         [HttpPost]
         //[Authorize]
         public async Task<IActionResult> AddMessage([FromBody] MessageInputDto messageInputDto)
-        {
+         {
             await _service.AddMessageBot(messageInputDto);
             //var newMessageDto = _service.GetMessageById(newEntityId);
             //var result = _mapper.Map<MessageOutputDto>(newMessageDto);

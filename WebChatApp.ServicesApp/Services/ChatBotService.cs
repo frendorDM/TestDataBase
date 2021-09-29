@@ -13,6 +13,7 @@ using Google.Apis.YouTube.v3;
 using Google.Apis.YouTube.v3.Data;
 using RestSharp;
 using WebChatApp.Core;
+using WebChatApp.Core.Enum;
 using WebChatApp.Core.Session;
 using WebChatApp.Models.Entities;
 using WebChatApp.Models.Models.InputModels;
@@ -29,7 +30,6 @@ namespace WebChatApp.ServicesApp
             _session = session;
             _mapper = mapper;
             _messageService = messageService;
-
         }
         public async Task<string> GetVideoId(string videoName)
         {
@@ -44,7 +44,6 @@ namespace WebChatApp.ServicesApp
             searchListRequest.Q = videoName; // Replace with your search term.
             searchListRequest.MaxResults = 1;
 
-            // Call the search.list method to retrieve results matching the specified query term.
             var searchListResponse = await searchListRequest.ExecuteAsync();
 
             var a = youtubeService.CommentThreads.List("snippet");
@@ -65,16 +64,42 @@ namespace WebChatApp.ServicesApp
                         videos.Add(String.Format("{0} ({1})", searchResult.Snippet.Title, searchResult.Id.VideoId));
                         string v = searchResult.Id.VideoId;
                         return v;
-
-                        //case "youtube#channel":
-                        //    channels.Add(String.Format("{0} ({1})", searchResult.Snippet.Title, searchResult.Id.ChannelId));
-                        //    break;
                 }
             }
-            return "LOX";
+            return "We couldn't find a video with that name";
             
         }
+        public async Task<string> GetChannelId(string channelName)
+        {
+            var youtubeService = new YouTubeService(new BaseClientService.Initializer()
+            {
+                ApiKey = "AIzaSyBsh8XU8bAL1FtP5GECDDnscMUTmY8o41A",
+                ApplicationName = this.GetType().ToString()
+            });
 
+            //var searchListRequest = youtubeService.Search.List("snippet");
+            var searchListRequest = youtubeService.Search.List("snippet");
+            searchListRequest.Q = channelName; // Replace with your search term.
+            searchListRequest.MaxResults = 5;
+
+            var searchListResponse = await searchListRequest.ExecuteAsync();
+
+            List<string> channels = new List<string>();
+
+            foreach (var searchResult in searchListResponse.Items)
+            {
+
+                switch (searchResult.Id.Kind)
+                {
+                    case "youtube#channel":
+                        channels.Add(String.Format("{0} ({1})", searchResult.Snippet.Title, searchResult.Id.ChannelId));
+                        string v = searchResult.Snippet.Title;
+                        return v;
+                }
+            }
+            return "We couldn't find a video with that name";
+
+        }
         public async Task<string> GetCommentFromVideo()
         {
             var youtubeService = new YouTubeService(new BaseClientService.Initializer()
@@ -88,7 +113,6 @@ namespace WebChatApp.ServicesApp
             searchListRequest.Q = "Лекция 1. Генезис операционных систем. Назначение ОС. Базовые принципы организации ОС"; // Replace with your search term.
             searchListRequest.MaxResults = 1;
 
-            // Call the search.list method to retrieve results matching the specified query term.
             var searchListResponse = await searchListRequest.ExecuteAsync();
 
             var a = youtubeService.CommentThreads.List("snippet");
@@ -118,6 +142,26 @@ namespace WebChatApp.ServicesApp
             return d;
 
         }
+        public async Task<List<string>> GetViewCountFromVideo(string videoId)
+        {
+            var youtubeService = new YouTubeService(new BaseClientService.Initializer()
+            {
+                ApiKey = "AIzaSyBsh8XU8bAL1FtP5GECDDnscMUTmY8o41A",
+                ApplicationName = this.GetType().ToString()
+            });
+
+            var views = youtubeService.Videos.List("statistics");
+            //views.Part = statistics;
+            views.Id = videoId;
+            var aresp = await views.ExecuteAsync();
+            List<string> viewCountList = new List<string>();
+            var viewCount = aresp.Items[0].Statistics.ViewCount;
+            viewCountList.Add(viewCount.ToString());
+            var likeCount = aresp.Items[0].Statistics.LikeCount;
+            viewCountList.Add(likeCount.ToString());
+            return viewCountList;
+
+        }
 
         public async Task AddMessageBot(MessageInputDto messageDto)
         {
@@ -133,11 +177,29 @@ namespace WebChatApp.ServicesApp
                 messageInputDto.ChatId = messageDto.ChatId;
                 messageInputDto.Text = linkToVideo;
                 messageInputDto.isDeleted = false;
-                messageInputDto.UserCreatorId = 5;
+                messageInputDto.UserCreatorId = (int)UserType.Bot;
+                if (messageForBot.Contains("-v-"))
+                {
+                    var viewCountList = await GetViewCountFromVideo(videoId);
+                    messageInputDto.Text = $"{linkToVideo} просмотры: {viewCountList[0] }";
+                    if (messageForBot.Contains("-v-|-"))
+                    {
+                        messageInputDto.Text = $"{linkToVideo} просмотры: {viewCountList[0]}, лайки:{viewCountList[1]} ";
+                    }
+                }
+                
                 await _messageService.AddMessage(messageInputDto);
             }
             else if (messageForBot.Contains("//info"))
             {
+                string channelNameFromUser = messageForBot.Remove(0, 6);
+                string channelName = await GetChannelId(channelNameFromUser);
+                MessageInputDto messageInputDto = new MessageInputDto();
+                messageInputDto.ChatId = messageDto.ChatId;
+                messageInputDto.Text = channelName;
+                messageInputDto.isDeleted = false;
+                messageInputDto.UserCreatorId = (int)UserType.Bot;
+                await _messageService.AddMessage(messageInputDto);
 
             }
             else if (messageForBot.Contains("//videoCommentRandom"))

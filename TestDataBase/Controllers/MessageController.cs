@@ -96,14 +96,35 @@ namespace TestDataBase.Controllers
         //[Authorize]
         public async Task<IActionResult> GetAllMessageByChatId(int chatId)
         {
-            var chat = await _service.GetAllMessageByChatId(chatId);
+            var messages = await _service.GetAllMessageByChatId(chatId);
 
-            if (chat == null)
+            if (messages == null)
             {
                 return NotFound($"Message with id {chatId} is not found");
             }
 
-            return Ok(chat);
+            return Ok(messages);
+        }
+
+        // https://localhost:44365/api/message/1
+        /// <summary>Get info of message</summary>
+        /// <param name="messageId">Id of message</param>
+        /// <returns>Info of message</returns>
+        [ProducesResponseType(typeof(ChatOutputDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [HttpGet("by-user/{userId}/chat-type/{chatType}/filter/{filter}")]
+        //[Authorize]
+        public async Task<IActionResult> GetAllMessageByUserId(int userId, int chatType, char filter, DateTime dateTime)
+        {
+            var messages = await _service.GetAllMessageByUserId(userId, chatType, filter, dateTime);
+
+            if (messages is null)
+            {
+                return NotFound($"Message with id {userId} is not found");
+            }
+
+            return Ok(messages);
         }
     }
 }

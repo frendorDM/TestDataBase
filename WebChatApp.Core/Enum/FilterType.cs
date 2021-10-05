@@ -4,8 +4,10 @@ using System.Text;
 
 namespace WebChatApp.Core.Enum
 {
-    public enum UserType
+    public enum FilterType
     {
-        Bot = 5
+        Equal,
+        MoreThan,
+        LessThan
     }
 }

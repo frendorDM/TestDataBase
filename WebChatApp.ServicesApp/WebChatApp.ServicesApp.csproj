@@ -10,6 +10,7 @@
     <PackageReference Include="Google.Apis.Auth" Version="1.55.0" />
     <PackageReference Include="Google.Apis.YouTube.v3" Version="1.55.0.2449" />
     <PackageReference Include="RestSharp" Version="106.12.0" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.12" />
   </ItemGroup>
 
   <ItemGroup>

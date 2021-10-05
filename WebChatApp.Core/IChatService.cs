@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using WebChatApp.Models.Entities;
+using WebChatApp.Models.Models;
 using WebChatApp.Models.Models.InputModels;
 
 namespace WebChatApp.Core
@@ -12,6 +14,7 @@ namespace WebChatApp.Core
 
         //public Task<int> AddPrivateChat(ChatInputDto chatInputDto, int chatType);
         public Task UpdateChatName(ChatEntity chatDto, string chatName);
+        public Task<List<DashboardModel>> GetDashboardByUserId(int id);
 
         public int DeleteChat(int id);
 

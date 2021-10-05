@@ -32,11 +32,11 @@ namespace WebChatApp.Data
             modelBuilder.Entity<UserRole>().ToTable("UserRoles");
             modelBuilder.Entity<UserChat>().ToTable("UserChats");
 
-            modelBuilder.Entity<MessageEntity>().HasOne(x => x.UserCreator)
-                .WithMany(x => x.Messages)
-                .HasForeignKey(x => x.UserCreatorId)
-                .HasPrincipalKey(x => x.Id)
-                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<MessageEntity>().HasOne(x => x.UserCreator)// у сообщения есть один создатель
+                .WithMany(x => x.Messages) // у создателя есть много сообщений
+                .HasForeignKey(x => x.UserCreatorId) // внешний ключ по отношению к таблице 
+                .HasPrincipalKey(x => x.Id) // ключ из таблицы Пользователя
+                .OnDelete(DeleteBehavior.Cascade); // разрешить каскадное удаление
 
             modelBuilder.Entity<ChatEntity>().HasOne(x => x.UserCreator)
                 .WithMany()

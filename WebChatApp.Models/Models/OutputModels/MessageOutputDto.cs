@@ -11,5 +11,6 @@ namespace WebChatApp.Models.Models.OutputModels
         public int ChatId { get; set; }
         public int UserCreatorId { get; set; }
         public bool isDeleted { get; set; }
+        public DateTime CreateTime { get; set; }
     }
 }

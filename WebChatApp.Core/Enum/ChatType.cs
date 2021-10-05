@@ -6,7 +6,7 @@ namespace WebChatApp.Core.Enum
 {
     public enum ChatType
     {
-        Public = 1,
+        Public,
         Private,
         Bot
     }

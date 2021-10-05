@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebChatApp.Models.Entities;
 using WebChatApp.Models.Models.InputModels;
@@ -13,6 +14,7 @@ namespace WebChatApp.Core
         public Task DeleteMessage(MessageOutputDto message);
         public Task<MessageOutputDto> GetMessageById(int id);
         public Task<List<MessageOutputDto>> GetAllMessageByChatId(int chatid);
+        public Task<List<MessageEntity>> GetAllMessageByUserId(int userId, int chatType, char filter, DateTime dateTime);
 
     }
 }

@@ -31,6 +31,7 @@ namespace TestDataBase
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebChatApp.Api", Version = "v1" });
             });
+            services.Configure<YouTubeApiOptions>(Configuration);
 
             services.AddAutoMapper(typeof(Startup));
         }

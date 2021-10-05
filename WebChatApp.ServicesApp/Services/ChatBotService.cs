@@ -11,8 +11,10 @@ using Google.Apis.Upload;
 using Google.Apis.Util.Store;
 using Google.Apis.YouTube.v3;
 using Google.Apis.YouTube.v3.Data;
+using Microsoft.Extensions.Options;
 using RestSharp;
 using WebChatApp.Core;
+using WebChatApp.Core.Const;
 using WebChatApp.Core.Enum;
 using WebChatApp.Core.Session;
 using WebChatApp.Models.Entities;
@@ -25,31 +27,29 @@ namespace WebChatApp.ServicesApp
         private readonly ISession _session;
         private IMapper _mapper;
         private IMessageService _messageService;
-        public ChatBotService(ISession session, IMapper mapper, IMessageService messageService)
+        private string _apiKey;
+
+        public ChatBotService(ISession session, IMapper mapper, 
+            IMessageService messageService, IOptions<YouTubeApiOptions> options)
         {
             _session = session;
             _mapper = mapper;
             _messageService = messageService;
+            _apiKey = options.Value.YouTubeApiKey;
         }
         public async Task<string> GetVideoId(string videoName)
         {
-            var youtubeService = new YouTubeService(new BaseClientService.Initializer()
-            {
-                ApiKey = "AIzaSyBsh8XU8bAL1FtP5GECDDnscMUTmY8o41A",
-                ApplicationName = this.GetType().ToString()
-            });
+            var youtubeService = InitYouTubeApi();
 
             var searchListRequest = youtubeService.Search.List("snippet");
 
-            searchListRequest.Q = videoName; // Replace with your search term.
+            searchListRequest.Q = videoName;
             searchListRequest.MaxResults = 1;
 
             var searchListResponse = await searchListRequest.ExecuteAsync();
 
             var a = youtubeService.CommentThreads.List("snippet");
             a.VideoId = searchListResponse.Items[0].Id.VideoId;
-            //a.Id = "E9AJvGkfAiU";
-            //a.MaxResults = 1;
             var aresp = await a.ExecuteAsync();
 
             List<string> videos = new List<string>();
@@ -62,8 +62,8 @@ namespace WebChatApp.ServicesApp
                 {
                     case "youtube#video":
                         videos.Add(String.Format("{0} ({1})", searchResult.Snippet.Title, searchResult.Id.VideoId));
-                        string v = searchResult.Id.VideoId;
-                        return v;
+                        string videoId = searchResult.Id.VideoId;
+                        return videoId;
                 }
             }
             return "We couldn't find a video with that name";
@@ -71,15 +71,10 @@ namespace WebChatApp.ServicesApp
         }
         public async Task<string> GetChannelId(string channelName)
         {
-            var youtubeService = new YouTubeService(new BaseClientService.Initializer()
-            {
-                ApiKey = "AIzaSyBsh8XU8bAL1FtP5GECDDnscMUTmY8o41A",
-                ApplicationName = this.GetType().ToString()
-            });
+            var youtubeService = InitYouTubeApi();
 
-            //var searchListRequest = youtubeService.Search.List("snippet");
             var searchListRequest = youtubeService.Search.List("snippet");
-            searchListRequest.Q = channelName; // Replace with your search term.
+            searchListRequest.Q = channelName;
             searchListRequest.MaxResults = 5;
 
             var searchListResponse = await searchListRequest.ExecuteAsync();
@@ -93,20 +88,16 @@ namespace WebChatApp.ServicesApp
                 {
                     case "youtube#channel":
                         channels.Add(String.Format("{0} ({1})", searchResult.Snippet.Title, searchResult.Id.ChannelId));
-                        string v = searchResult.Snippet.Title;
-                        return v;
+                        string channalName = searchResult.Snippet.Title;
+                        return channalName;
                 }
             }
-            return "We couldn't find a video with that name";
+            return "We couldn't find a channal with that name";
 
         }
         public async Task<string> GetCommentFromVideo()
         {
-            var youtubeService = new YouTubeService(new BaseClientService.Initializer()
-            {
-                ApiKey = "AIzaSyBsh8XU8bAL1FtP5GECDDnscMUTmY8o41A",
-                ApplicationName = this.GetType().ToString()
-            });
+            var youtubeService = InitYouTubeApi();
 
             var searchListRequest = youtubeService.Search.List("snippet");
 
@@ -144,11 +135,7 @@ namespace WebChatApp.ServicesApp
         }
         public async Task<List<string>> GetViewCountFromVideo(string videoId)
         {
-            var youtubeService = new YouTubeService(new BaseClientService.Initializer()
-            {
-                ApiKey = "AIzaSyBsh8XU8bAL1FtP5GECDDnscMUTmY8o41A",
-                ApplicationName = this.GetType().ToString()
-            });
+            var youtubeService = InitYouTubeApi();
 
             var views = youtubeService.Videos.List("statistics");
             //views.Part = statistics;
@@ -177,7 +164,7 @@ namespace WebChatApp.ServicesApp
                 messageInputDto.ChatId = messageDto.ChatId;
                 messageInputDto.Text = linkToVideo;
                 messageInputDto.isDeleted = false;
-                messageInputDto.UserCreatorId = (int)UserType.Bot;
+                messageInputDto.UserCreatorId = Const.ChatBot;
                 if (messageForBot.Contains("-v-"))
                 {
                     var viewCountList = await GetViewCountFromVideo(videoId);
@@ -198,7 +185,7 @@ namespace WebChatApp.ServicesApp
                 messageInputDto.ChatId = messageDto.ChatId;
                 messageInputDto.Text = channelName;
                 messageInputDto.isDeleted = false;
-                messageInputDto.UserCreatorId = (int)UserType.Bot;
+                messageInputDto.UserCreatorId = Const.ChatBot;
                 await _messageService.AddMessage(messageInputDto);
 
             }
@@ -210,6 +197,14 @@ namespace WebChatApp.ServicesApp
             {
             
             }
+        }
+        public YouTubeService InitYouTubeApi() 
+        {
+            return new YouTubeService(new BaseClientService.Initializer()
+            {
+                ApiKey = _apiKey,
+                ApplicationName = this.GetType().ToString()
+            });
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using WebChatApp.Models.Entities;
+using System.Linq.Dynamic;
 
 namespace WebChatApp.Core.Session
 {

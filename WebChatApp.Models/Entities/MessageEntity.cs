@@ -10,6 +10,7 @@ namespace WebChatApp.Models.Entities
         public int ChatId { get; set; }
         public int UserCreatorId { get; set; }
         public bool IsDeleted { get; set; }
+        public DateTime CreateTime { get; set; }
         public UserEntity UserCreator { get; set; }
         public ChatEntity Chat { get; set; }
     }

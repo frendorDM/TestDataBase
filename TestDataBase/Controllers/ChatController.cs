@@ -73,7 +73,7 @@ namespace TestDataBase.Controllers
                 return NotFound($"User with id{chat.UserCreatorId} not found");
 
             var userChat = await _userService.GetUserById(userChatId);
-            if (user is null)
+            if (userChat is null)
                 return NotFound($"User with id{chat.UserCreatorId} not found");
 
             int chatType = (int)ChatType.Private;
@@ -185,6 +185,30 @@ namespace TestDataBase.Controllers
 
             await _service.AddUserToChat(chatId, userId);
             return Ok();
+        }
+
+        // https://localhost:44365/api/chat/1
+        /// <summary>Get info of chat</summary>
+        /// <param name="cahtId">Id of chat</param>
+        /// <returns>Info of chat</returns>
+        [ProducesResponseType(typeof(ChatOutputDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [HttpGet("Dashboard/{userId}")]
+        //[Authorize]
+        public async Task<IActionResult> GetDashboardByUserId(int userId)
+        {
+            var user = await _userService.GetUserById(userId);
+            if (user is null)
+                return NotFound($"User with id{userId} not found");
+
+            var chat = await _service.GetDashboardByUserId(userId);
+            if (chat is null)
+            {
+                return NotFound($"User don't added in a chat yet");
+            }
+
+            return Ok(chat);
         }
     }
 }

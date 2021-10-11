@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using WebChatApp.ServicesApp;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using WebChatApp.Models.Models;
 using WebChatApp.Models.Models.InputModels;
+using WebChatApp.Core;
+using System.Threading.Tasks;
 
 namespace TestDataBase.Controllers
 {
@@ -13,22 +12,25 @@ namespace TestDataBase.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
-
-        public AuthenticationController()
+        private IAuthenticationService _service;
+        private ISecurityService _securityService;
+        public AuthenticationController(IAuthenticationService authenticationService, ISecurityService securityService)
         {
+            _service = authenticationService;
+            _securityService = securityService;
         }
 
         [HttpPost]
         [ProducesResponseType(typeof(AuthResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
-        public ActionResult<AuthResponse> Authentificate([FromBody] AuthenticationInputDto login)
+        public async Task<ActionResult<AuthResponse>> Authentificate([FromBody] AuthenticationInputDto login)
         {
-            //var user = _service.GetAuthentificatedUser(login.Login);
-            //if (user != null && _securityService.VerifyHashAndPassword(user.Password, login.Password))
-            //{
-            //    var token = _service.GenerateToken(user);
-            //    return Ok(token);
-            //}
+            var user = await _service.GetAuthentificatedUser(login.Login);
+            if (user != null && _securityService.VerifyHashAndPassword(user.Password, login.Password))
+            {
+                var token = _service.GenerateToken(user);
+                return Ok(token);
+            }
             return NotFound("Wrong credentials");
         }
     }

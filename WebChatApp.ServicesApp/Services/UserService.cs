@@ -8,6 +8,7 @@ using WebChatApp.Core.Session;
 using WebChatApp.Models.Entities;
 using WebChatApp.Models.Models.InputModels;
 using WebChatApp.Models.Models.OutputModels;
+using WebChatApp.ServicesApp.Services;
 
 namespace WebChatApp.ServicesApp
 {
@@ -23,6 +24,7 @@ namespace WebChatApp.ServicesApp
 
         public async Task AddUser(UserInputDto inputModel)
         {
+            inputModel.Password = new SecurityService().GetHash(inputModel.Password);
             var userEntity = _mapper.Map<UserEntity>(inputModel);
             await _session.AddEntityAsync(userEntity);
         }
@@ -34,8 +36,15 @@ namespace WebChatApp.ServicesApp
 
         public async Task<UserEntity> GetUserById(int id)
         {
-            var user = await _session.Query<UserEntity>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            var user = await _session.Query<UserEntity>().AsNoTracking().Include(x => x.Roles).FirstOrDefaultAsync(x => x.Id == id);
 
+            foreach (var searchResult in user.Roles)
+            {
+                var roleId = searchResult.Id;
+                var role = await _session.Query<RoleEntity>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == roleId);
+                searchResult.Role = role;
+            }
+            
             return user;
         }
 

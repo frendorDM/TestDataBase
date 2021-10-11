@@ -11,6 +11,5 @@ namespace WebChatApp.Models.RelationShip
         public int RoleId { get; set; }
         public UserEntity User { get; set; }
         public RoleEntity Role { get; set; }
-
     }
 }

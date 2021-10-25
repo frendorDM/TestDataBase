@@ -36,14 +36,7 @@ namespace WebChatApp.ServicesApp
 
         public async Task<UserEntity> GetUserById(int id)
         {
-            var user = await _session.Query<UserEntity>().AsNoTracking().Include(x => x.Roles).FirstOrDefaultAsync(x => x.Id == id);
-
-            foreach (var searchResult in user.Roles)
-            {
-                var roleId = searchResult.Id;
-                var role = await _session.Query<RoleEntity>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == roleId);
-                searchResult.Role = role;
-            }
+            var user = await _session.Query<UserEntity>().AsNoTracking().Include(x => x.Roles).ThenInclude(x => x.Role).FirstOrDefaultAsync(x => x.Id == id);
             
             return user;
         }

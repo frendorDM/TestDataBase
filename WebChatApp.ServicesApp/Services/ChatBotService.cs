@@ -163,7 +163,7 @@ namespace WebChatApp.ServicesApp
                 MessageInputDto messageInputDto = new MessageInputDto();
                 messageInputDto.ChatId = messageDto.ChatId;
                 messageInputDto.Text = linkToVideo;
-                messageInputDto.isDeleted = false;
+                messageInputDto.IsDeleted = false;
                 messageInputDto.UserCreatorId = Const.ChatBot;
                 if (messageForBot.Contains("-v-"))
                 {
@@ -184,7 +184,7 @@ namespace WebChatApp.ServicesApp
                 MessageInputDto messageInputDto = new MessageInputDto();
                 messageInputDto.ChatId = messageDto.ChatId;
                 messageInputDto.Text = channelName;
-                messageInputDto.isDeleted = false;
+                messageInputDto.IsDeleted = false;
                 messageInputDto.UserCreatorId = Const.ChatBot;
                 await _messageService.AddMessage(messageInputDto);
 

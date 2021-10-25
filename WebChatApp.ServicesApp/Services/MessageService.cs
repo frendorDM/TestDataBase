@@ -39,7 +39,7 @@ namespace WebChatApp.ServicesApp
 
         public async Task<MessageOutputDto> GetMessageById(int id) 
         {
-            var messageEntity = await _session.Query<MessageEntity>().AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+            var messageEntity = await _session.Query<MessageEntity>().AsNoTracking().SingleOrDefaultAsync(x => x.Id == id);
             var result = _mapper.Map<MessageOutputDto>(messageEntity);
             return result;
         }

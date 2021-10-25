@@ -73,12 +73,6 @@ namespace WebChatApp.Data
                 .HasForeignKey(x => x.UserId)
                 .HasPrincipalKey(x => x.Id)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            modelBuilder.Entity<UserRole>().HasOne(x => x.Role)
-               .WithMany(x => x.Users)
-               .HasForeignKey(x => x.RoleId)
-               .HasPrincipalKey(x => x.Id)
-               .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

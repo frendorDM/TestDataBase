@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebChatApp.Models", "WebCha
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebChatApp.ServicesApp", "WebChatApp.ServicesApp\WebChatApp.ServicesApp.csproj", "{82142ACD-F30F-4306-B125-22CBD9560A26}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebChatApp.Core", "WebChatApp.Core\WebChatApp.Core.csproj", "{63FC4D68-9C04-4A16-B1F9-CADF7B187562}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebChatApp.Core", "WebChatApp.Core\WebChatApp.Core.csproj", "{63FC4D68-9C04-4A16-B1F9-CADF7B187562}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebChatApp.Tests", "WebChatApp.Tests\WebChatApp.Tests.csproj", "{C41EE161-049D-437B-9BE8-B3363AD50125}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{63FC4D68-9C04-4A16-B1F9-CADF7B187562}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63FC4D68-9C04-4A16-B1F9-CADF7B187562}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63FC4D68-9C04-4A16-B1F9-CADF7B187562}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C41EE161-049D-437B-9BE8-B3363AD50125}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C41EE161-049D-437B-9BE8-B3363AD50125}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C41EE161-049D-437B-9BE8-B3363AD50125}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C41EE161-049D-437B-9BE8-B3363AD50125}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

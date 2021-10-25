@@ -17,7 +17,7 @@ namespace WebChatApp.Models.Models.InputModels
         [Range(1, int.MaxValue)]
         public int UserCreatorId { get; set; }
         [Required]
-        public bool isDeleted { get; set; }
+        public bool IsDeleted { get; set; }
 
     }
 }
